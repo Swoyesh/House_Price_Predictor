@@ -81,7 +81,9 @@ amenities_frequency_map = {
 @app.route("/")
 def home():
     print("Home route accessed")
-    return render_template("index.html")
+    cities = list(city_frequency_map.keys())
+    print(cities)
+    return render_template("index.html", cities = cities)
 
 @app.route("/predict", methods=["POST"])
 def predict():
@@ -90,8 +92,6 @@ def predict():
         city = request.form.get("City")
         bedroom = int(request.form.get("Bedroom"))
         bathroom = int(request.form.get("Bathroom"))
-        floors = int(request.form.get("Floors"))
-        parking = int(request.form.get("Parking"))
         year = int(request.form.get("Year"))
         new_area = float(request.form.get("NewArea"))
         amenities = request.form.get("Amenities").split(",") 
@@ -100,7 +100,7 @@ def predict():
 
         amenities_score = sum(amenities_frequency_map.get(amenity.strip(), 0) for amenity in amenities)
 
-        features = np.array([city_encoded, bedroom, bathroom, floors, parking, year, new_area, amenities_score]).reshape(1, -1)
+        features = np.array([city_encoded, bedroom, bathroom, year, new_area, amenities_score]).reshape(1, -1)
 
         prediction = model.predict(features)
 
