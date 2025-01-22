@@ -2,8 +2,16 @@ from flask import Flask, request, jsonify, render_template
 import pickle
 import numpy as np
 
+with open("amenities.pkl", "rb") as f:
+    new_amenities = pickle.load(f)
+
 with open("model.pkl", "rb") as file:
     model = pickle.load(file)
+
+final_amenities = []
+for amenity in new_amenities:
+    if amenity and amenity not in final_amenities:
+        final_amenities.append(amenity)
 
 app = Flask(__name__)
 
@@ -78,12 +86,12 @@ amenities_frequency_map = {
     'Jacuzzi': 10
 }
 
+cities = list(city_frequency_map.keys())
+
 @app.route("/")
 def home():
     print("Home route accessed")
-    cities = list(city_frequency_map.keys())
-    print(cities)
-    return render_template("index.html", cities = cities)
+    return render_template("index.html", cities = cities, amenities = final_amenities)
 
 @app.route("/predict", methods=["POST"])
 def predict():
@@ -96,6 +104,7 @@ def predict():
         new_area = float(request.form.get("NewArea"))
         amenities = request.form.get("Amenities").split(",") 
 
+
         city_encoded = city_frequency_map.get(city, 0)
 
         amenities_score = sum(amenities_frequency_map.get(amenity.strip(), 0) for amenity in amenities)
@@ -104,7 +113,7 @@ def predict():
 
         prediction = model.predict(features)
 
-        return render_template("index.html", prediction = int(prediction[0]))
+        return render_template("index.html", prediction = int(prediction[0]), cities = cities, amenities = final_amenities)
 
     except Exception as e:
         return render_template("index.html", error=f"Error occurred: {str(e)}")

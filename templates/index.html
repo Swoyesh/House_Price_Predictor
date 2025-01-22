@@ -13,8 +13,8 @@
 
         <form id="predictionForm" action="/predict" method="POST" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
             <div class="mb-4">
-                <label for="City" class="block font-medium text-gray-700">City</label>
-                <select name="City" id="City" class="w-full border-gray-300 rounded-lg">
+                <label for="City" class="block text-gray-700 text-sm font-bold mb-2">City:</label>
+                <select name="City" id="City" class="w-full shadow appearance-none border rounded w-full py-2 px-3 text-gray-700">
                     {% for city in cities %}
                         <option value="{{city}}">{{city}}</option>
                     {% endfor %}
@@ -51,8 +51,11 @@
 
             <div class="mb-4">
                 <label for="Amenities" class="block text-gray-700 text-sm font-bold mb-2">Amenities:</label>
-                <input type="text" id="Amenities" name="Amenities" placeholder="Enter amenities (comma-separated)" 
-                       class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700">
+                <select name="Amenities" id="Amenities" class="w-full shadow appearance-none border rounded w-full py-2 px-3 text-gray-700">
+                    {% for amenity in amenities %}
+                            <option value="{{ amenity|join(', ') }}">{{ amenity|join(', ') }}</option>
+                    {% endfor %}
+                </select>
             </div>
 
             <div class="flex items-center justify-between">
@@ -97,7 +100,7 @@
 
                 if (value < input.min || value > input.max) {
                     isValid = false;
-                    document.getElementById(ele_error).textContent = `The value of ${input.id} should be greater than ${input.min} and less than ${input.max}!!`
+                    document.getElementById(ele_error).textContent = `The value of ${input.id} should be greater than ${input.min} and less than ${input.max}!`
                 }
             });
 
